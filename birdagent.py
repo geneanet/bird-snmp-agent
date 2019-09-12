@@ -50,12 +50,8 @@ class BirdAgent(object):
     _re_config_include = re.compile("^include\s*\"(/[^\"]*)\".*$")
     _re_config_bgp_proto_begin = re.compile(
         "^protocol bgp ([a-zA-Z0-9_]+).*\{$")
-    _re_config_local_as = re.compile(
-        "local ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+) as ([0-9]+);")
     _re_config_bgp_holdtime = re.compile("hold time ([0-9]+);")
     _re_config_bgp_keepalive = re.compile("keepalive time ([0-9]+);")
-    _re_config_remote_peer = re.compile(
-        "neighbor ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+) as ([0-9]+);")
     _re_config_timeformat = re.compile(
         "\s*timeformat\s+protocol\s+iso\s+long\s+;")
     _re_config_proto_end = re.compile("^\}$")
@@ -193,25 +189,6 @@ class BirdAgent(object):
                 proto = match.group(1)
                 cfg["bgp-peers"][proto] = {}
             if proto:
-                match = self._re_config_local_as.search(line)
-                if match:
-                    cfg["bgp-peers"][proto]["bgpPeerLocalAddr"] = SnmpIpAddress(
-                        match.group(1))
-                    cfg["bgp-peers"][proto]["bgpPeerLocalAs"] = int(
-                        match.group(2))
-                    if "bgpLocalAs" not in cfg:
-                        cfg["bgpLocalAs"] = int(match.group(2))
-                    elif cfg["bgpLocalAs"] != int(match.group(2)):
-                        print("WARNING: multiple local AS: %i/%i" %
-                              (cfg["bgpLocalAs"], int(match.group(2))))
-
-                match = self._re_config_remote_peer.search(line)
-                if match:
-                    cfg["bgp-peers"][proto]["bgpPeerRemoteAddr"] = SnmpIpAddress(
-                        match.group(1))
-                    cfg["bgp-peers"][proto]["bgpPeerRemoteAs"] = int(
-                        match.group(2))
-
                 match = self._re_config_bgp_holdtime.search(line)
                 if match:
                     cfg["bgp-peers"][proto]["bgpPeerHoldTimeConfigured"] = int(
@@ -228,19 +205,6 @@ class BirdAgent(object):
         if "timeformat" not in cfg:
             print("ERROR: timeformat not configured for this agent's use, terminating...")
             sys.exit(1)
-
-        # Validate protocol's config
-        for proto in cfg["bgp-peers"]:
-            if not cfg["bgp-peers"][proto]: continue
-            if "bgpPeerLocalAddr" not in cfg["bgp-peers"][proto] and \
-               "bgpPeerLocalAs" not in cfg["bgp-peers"][proto]:
-                print(
-                    "WARNING: Protocol \"%s\" does not have a properly formated 'local <ip> as <asn>;' line in the config" % proto)
-
-            if "bgpPeerRemoteAddr" not in cfg["bgp-peers"][proto] and \
-                    "bgpPeerRemoteAs" not in cfg["bgp-peers"][proto]:
-                print(
-                    "WARNING: Protocol \"%s\" does not have a properly formated 'neighbor <ip> as <asn>;' line in the config" % proto)
 
         state = cfg.copy()
         bgp_proto = None
