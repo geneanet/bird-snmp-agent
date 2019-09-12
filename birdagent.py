@@ -18,7 +18,6 @@ birdagent - agentx code for the bird routing daemon
 """
 from __future__ import print_function
 
-from past.builtins import cmp
 from builtins import object
 from adv_agentx import AgentX
 from adv_agentx import SnmpGauge32, SnmpCounter32, SnmpIpAddress
@@ -140,7 +139,7 @@ class BirdAgent(object):
     def ipCompare(ip1, ip2):
         lst1 = "%3s.%3s.%3s.%3s" % tuple(ip1.split("."))
         lst2 = "%3s.%3s.%3s.%3s" % tuple(ip2.split("."))
-        return cmp(lst1, lst2)
+        return (lst1>lst2)-(lst1<lst2)
 
     @staticmethod
     def combinedConfigLines(filename):
