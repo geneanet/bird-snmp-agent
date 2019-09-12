@@ -1,0 +1,11 @@
+[Unit]
+Description=SNMP Agent for BIRD Internet Routing Daemon
+After=bird.service snmpd.service
+Wants=bird.service
+BindsTo=snmpd.service
+
+[Service]
+ExecStart=/usr/bin/python3 /opt/bird-snmp-agent/bird_bgp.py
+
+[Install]
+WantedBy=multi-user.target
