@@ -88,7 +88,6 @@ class BirdAgent(object):
         'bgpPeerNegotiatedVersion',
         'bgpPeerLocalAddr',
         'bgpPeerLocalPort',
-        'bgpPeerLocalAs',
         'bgpPeerRemoteAddr',
         'bgpPeerRemotePort',
         'bgpPeerRemoteAs',
@@ -307,6 +306,11 @@ class BirdAgent(object):
 
             if self._re_birdcli_bgp_end.search(line):
                 bgp_proto = None
+
+        local_as = set(peer["bgpPeerLocalAs"] for peer in state["bgp-peers"].values())
+        state["bgpLocalAs"] = min(local_as)
+        if len(local_as) > 1:
+            print("WARNING: multiple local AS: %s; using %i" % (", ".join(str(asn) for asn in local_as), state["bgpLocalAs"]))
 
         # use ss to query for source and destination ports of the bgp protocols
         bgp_sessions = {}
