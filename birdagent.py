@@ -264,9 +264,9 @@ class BirdAgent(object):
                             else:
                                 state["bgp-peers"][bgp_proto][peerprop_name] = int(
                                     match.group(1))
-                except:
-                    print("WARNING: Unable to process \"%s\" as \"%s\" for protocol \"%s\"" %
-                          (match.group(1), peerprop_name, bgp_proto))
+                except Exception as e:
+                    print("WARNING: Unable to process \"%s\" as \"%s\" for protocol \"%s\": %s" %
+                          (match.group(1), peerprop_name, bgp_proto, str(e)))
 
             if self._re_birdcli_bgp_end.search(line):
                 bgp_proto = None
