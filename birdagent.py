@@ -27,6 +27,7 @@ import subprocess
 import glob
 import dateutil.parser
 from datetime import datetime
+import traceback
 import pytz
 from tzlocal import get_localzone
 
@@ -266,7 +267,7 @@ class BirdAgent(object):
                                     match.group(1))
                 except Exception as e:
                     print("WARNING: Unable to process \"%s\" as \"%s\" for protocol \"%s\": %s" %
-                          (match.group(1), peerprop_name, bgp_proto, str(e)))
+                          (match.group(1), peerprop_name, bgp_proto, traceback.format_exc(e)))
 
             if self._re_birdcli_bgp_end.search(line):
                 bgp_proto = None
