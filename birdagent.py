@@ -229,6 +229,7 @@ class BirdAgent(object):
                     print(
                         "WARNING: proto \"%s\" not in config, skipping" %
                         bgp_proto)
+                    bgp_proto = None
                     continue
                 state["bgp-peers"][bgp_proto]["bgpPeerFsmEstablishedTime"] = SnmpGauge32(
                     abs(current_time - timestamp).total_seconds())
