@@ -25,6 +25,7 @@ import sys
 import re
 import subprocess
 import glob
+import os
 import dateutil.parser
 from datetime import datetime
 import traceback
@@ -48,7 +49,7 @@ class BirdAgent(object):
         "established": 6,
     }
 
-    _re_config_include = re.compile("^include\s*\"(/[^\"]*)\".*$")
+    _re_config_include = re.compile("^include\s*\"([^\"]*)\".*$")
     _re_config_bgp_proto_begin = re.compile(
         "^protocol bgp ([a-zA-Z0-9_]+).*\{$")
     _re_config_bgp_holdtime = re.compile("hold time ([0-9]+);")
@@ -151,7 +152,10 @@ class BirdAgent(object):
                     if not match:
                         yield line
                     else:
-                        for subconf in glob.glob(match.group(1)):
+                        included = match.group(1)
+                        if not included.startswith('/'):
+                            included = os.path.join(os.path.dirname(filename), included)
+                        for subconf in glob.glob(included):
                             yield "# subconf: %s (from %s)" % (subconf, line)
                             for subline in BirdAgent.combinedConfigLines(subconf):
                                 yield subline
