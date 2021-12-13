@@ -32,6 +32,7 @@ import signal
 import os
 import sys
 import socket  # for inet_aton
+import locale
 
 # export names
 __all__ = [
@@ -309,6 +310,10 @@ def ReadTOID(oid):
     oid = (oid_t * len(oid_list))(*oid_list)
     axl.snprint_objid(strOID, OID_LEN, oid, len(oid))
     return strOID.value
+
+def b(s):
+    """ Encodes Unicode strings to byte strings, if necessary. """
+    return s if isinstance(s, bytes) else s.encode(locale.getpreferredencoding())
 
 # exceptions
 
@@ -598,7 +603,7 @@ class AgentX(object):
         if not type(self.MIBFile) in (list, tuple):
             self.MIBFile = (self.MIBFile,)
         for mib in self.MIBFile:
-            axl.read_mib(mib)
+            axl.read_mib(b(mib))
 
         # install low level handler
         if self.RootOID:
