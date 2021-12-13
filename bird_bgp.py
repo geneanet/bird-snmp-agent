@@ -80,7 +80,7 @@ if __name__ == '__main__':
     print('bird-bgp-agent AgentX starting')
 
     bird = BirdAgent(
-        os.environ.get("BIRDCONF") or "/etc/bird/bird.conf",
+        os.environ.get("BIRDCONF") or "/etc/bird.conf",
         os.environ.get("BIRDCLI") or "/usr/sbin/birdc",
         os.environ.get("SSCMD") or "ss -tan -o state established '( dport = :bgp or sport = :bgp )'")
 
