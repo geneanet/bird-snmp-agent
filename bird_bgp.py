@@ -80,9 +80,9 @@ if __name__ == '__main__':
     print('bird-bgp-agent AgentX starting')
 
     bird = BirdAgent(
-        os.environ.get("BIRDCONF") or "/etc/bird.conf",
+        os.environ.get("BIRDCONF") or "/etc/bird/bird.conf",
         os.environ.get("BIRDCLI") or "/usr/sbin/birdc",
-        os.environ.get("SSCMD") or "ss -tan -o state established '( dport = :bgp or sport = :bgp )'")
+        os.environ.get("SSCMD") or "/bin/ss -tan -o state established '( dport = :bgp or sport = :bgp )'")
 
     callbacks = {
         "OnSnmpRead": OnSnmpRead,
@@ -97,8 +97,7 @@ if __name__ == '__main__':
         AgentX(
             callbacks,
             Name='bird-bgp',
-            MIBFile=os.environ.get(
-                "BGPMIBFILE") or "/var/lib/mibs/ietf/BGP4-MIB",
+            MIBFile=os.environ.get("BGPMIBFILE") or "/var/lib/snmp/mibs/ietf/BGP4-MIB",
             RootOID='BGP4-MIB::bgp',  # https://tools.ietf.org/html/draft-ietf-idr-bgp4-mib-06
             CacheInterval=int(os.environ.get("AGENTCACHEINTERVAL") or "30")
         )
