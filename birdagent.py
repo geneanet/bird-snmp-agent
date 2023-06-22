@@ -27,7 +27,6 @@ import glob
 import os
 import dateutil.parser
 from datetime import datetime
-import traceback
 import pytz
 from tzlocal import get_localzone
 
