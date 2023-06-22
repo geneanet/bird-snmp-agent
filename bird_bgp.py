@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 #
 # Copyright (c) 2016 Travelping GmbH <copyright@travelping.com>
 # by Tobias Hintze <tobias.hintze@travelping.com>
